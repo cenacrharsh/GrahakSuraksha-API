@@ -2,8 +2,8 @@ const express = require("express");
 
 const fraudDetectionRouter = express.Router();
 
-// const { httpGetAllPlanets } = require("./planets.controller");
+const { fraudDetectionHandler } = require("./fraud_detection.controller");
 
-fraudDetectionRouter.get("/fraud", fraudDetectionHandler);
+fraudDetectionRouter.post("/fraud", fraudDetectionHandler);
 
 module.exports = fraudDetectionRouter;
