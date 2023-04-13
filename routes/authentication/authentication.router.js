@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const authRouter = express.Router();
 
 //# Importing User Model
-const userModelInstance = require("../database/models/user");
+const userModelInstance = require("../../database/models/user.model");
 const userModel = userModelInstance.model;
 const userTypeEnums = userModelInstance.userRoleEnums;
 
@@ -18,24 +18,26 @@ authRouter.post("/signin", function (req, res) {
         .then(async function (user) {
             //* check if user exists
             if (!user) {
-                res.render("signin", { error: "User Doesn't Exist !!!" });
-                return;
+                return res.status(400).json({
+                    message: "User doesn't exist !!!",
+                });
             }
 
             var hashedPassword = user.password;
-            // check user password with hashed password stored in the database
+            //* check user password with hashed password stored in the database
             const validPassword = await bcrypt.compare(
                 enteredPassword,
                 hashedPassword
             );
             if (!validPassword) {
-                res.render("signin", { error: "Incorrect Email/Password !!!" });
-                return;
+                return res.status(400).json({
+                    message: "Wrong Email/Password !!!",
+                });
             } else {
-                req.session.isLoggedIn = true;
-                req.session.user = user;
+                // req.session.isLoggedIn = true;
+                // req.session.user = user;
 
-                res.send(200).json({
+                res.status(200).json({
                     message: "Successfully Logged In !!!",
                     user: user,
                 });
@@ -43,7 +45,7 @@ authRouter.post("/signin", function (req, res) {
         })
         .catch(function (err) {
             console.log(err);
-            res.send(400).json({
+            res.status(400).json({
                 message: "Error Occurred In Logging In !!!",
                 error: err,
             });
@@ -102,6 +104,9 @@ authRouter.post("/signup", function (req, res) {
                     })
                     .then(function (user) {
                         console.log("new user", user);
+                        return res.status(200).json({
+                            user: user,
+                        });
                     })
                     .catch(function (err) {
                         console.log(err);
