@@ -36,7 +36,7 @@ async function fraudDetectionHandler(req, res) {
                     console.log("if section");
                     return res.status(200).json({
                         is_gov_verified: false,
-                        isFraud: true,
+                        is_fraud: true,
                         number_of_userReported:
                             fraudulentPhoneNumber.number_of_userReported,
                     });
@@ -44,7 +44,7 @@ async function fraudDetectionHandler(req, res) {
                     console.log("else section");
                     return res.status(200).json({
                         is_gov_verified: false,
-                        isFraud: false,
+                        is_fraud: false,
                         number_of_userReported: 0,
                     });
                 }
@@ -77,7 +77,7 @@ async function fraudDetectionHandler(req, res) {
                 } else {
                     return res.status(200).json({
                         isVerified: false,
-                        isFraud: false,
+                        is_fraud: false,
                         number_of_reports: 0,
                     });
                 }
