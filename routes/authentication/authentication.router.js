@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 
-const router = express.Router();
+const authRouter = express.Router();
 
 //# Importing User Model
 const userModelInstance = require("../database/models/user");
@@ -9,7 +9,7 @@ const userModel = userModelInstance.model;
 const userTypeEnums = userModelInstance.userRoleEnums;
 
 //! Sign In
-router.post("/signin", function (req, res) {
+authRouter.post("/signin", function (req, res) {
     const email = req.body.email;
     const enteredPassword = req.body.password;
 
@@ -51,7 +51,7 @@ router.post("/signin", function (req, res) {
 });
 
 //! Sign Up
-router.post("/signup", function (req, res) {
+authRouter.post("/signup", function (req, res) {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
@@ -98,7 +98,6 @@ router.post("/signup", function (req, res) {
                         name: name,
                         email: email,
                         password: hashedPassword,
-                        isVerifiedEmail: false,
                         userType: userTypeEnums.customer,
                     })
                     .then(function (user) {
@@ -125,7 +124,7 @@ router.post("/signup", function (req, res) {
 });
 
 //! Sign Out
-router.get("/signout", function (req, res) {
+authRouter.get("/signout", function (req, res) {
     req.session.destroy();
     console.log("Successfully Logged Out !!!");
     res.send(200).json({
@@ -133,4 +132,4 @@ router.get("/signout", function (req, res) {
     });
 });
 
-module.exports = router;
+module.exports = authRouter;

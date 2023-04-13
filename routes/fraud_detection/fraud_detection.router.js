@@ -4,6 +4,6 @@ const fraudDetectionRouter = express.Router();
 
 const { fraudDetectionHandler } = require("./fraud_detection.controller");
 
-fraudDetectionRouter.post("/fraud", fraudDetectionHandler);
+fraudDetectionRouter.post("/", fraudDetectionHandler);
 
 module.exports = fraudDetectionRouter;
