@@ -60,23 +60,33 @@ authRouter.post("/signup", function (req, res) {
     const confirmPassword = req.body.confirmPassword;
 
     if (!name) {
-        res.render("signup", { error: "Please Enter Username" });
+        return res.status(400).json({
+            message: "Please Enter Username",
+        });
     }
 
     if (!email) {
-        res.render("signup", { error: "Please Enter Email" });
+        return res.status(400).json({
+            message: "Please Enter Email",
+        });
     }
 
     if (!password) {
-        res.render("signup", { error: "Please Enter Password" });
+        return res.status(400).json({
+            message: "Please Enter Password",
+        });
     }
 
     if (!confirmPassword) {
-        res.render("signup", { error: "Please Enter Confirm Password" });
+        return res.status(400).json({
+            message: "Please Enter Confirm Password",
+        });
     }
 
     if (password !== confirmPassword) {
-        res.render("signup", { error: "Passwords Don't Match" });
+        return res.status(400).json({
+            message: "Passwords Don't Match",
+        });
     }
 
     userModel
@@ -110,8 +120,8 @@ authRouter.post("/signup", function (req, res) {
                     })
                     .catch(function (err) {
                         console.log(err);
-                        res.render("signup", {
-                            error: "Error Occured While Signing Up !!!",
+                        return res.status(500).json({
+                            message: "Error Occured While Signing Up !!!",
                         });
                     });
             }
@@ -121,7 +131,7 @@ authRouter.post("/signup", function (req, res) {
                 "Error Occured While Searching For User in DB During SignUp !!!",
                 err
             );
-            res.send(400).json({
+            res.status(400).json({
                 message: "Error Occurred In Logging In !!!",
                 error: err,
             });
@@ -132,7 +142,7 @@ authRouter.post("/signup", function (req, res) {
 authRouter.get("/signout", function (req, res) {
     req.session.destroy();
     console.log("Successfully Logged Out !!!");
-    res.send(200).json({
+    res.status(200).json({
         message: "Successfully Logged Out !!!",
     });
 });
