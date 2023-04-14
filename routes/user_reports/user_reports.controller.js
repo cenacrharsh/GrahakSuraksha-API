@@ -79,7 +79,9 @@ async function userReportsHandler(req, res) {
         }
 
         console.log("new report: ", report);
-        return res.status(200);
+        return res.status(200).json({
+            description: description,
+        });
     } catch (err) {
         console.log("Error: ", err);
         return res.status(500).json({
