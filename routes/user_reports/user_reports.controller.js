@@ -46,11 +46,11 @@ async function userReportsHandler(req, res) {
         }
 
         let fraud;
-        if (fraud_type === "phone_call") {
+        if (fraud_type === "Mobile") {
             fraud = fraudTypeEnums.phone_call;
-        } else if (fraud_type === "message") {
+        } else if (fraud_type === "Message Header") {
             fraud = fraudTypeEnums.message;
-        } else if (fraud_type === "payment") {
+        } else if (fraud_type === "UPI ID") {
             fraud = fraudTypeEnums.payment;
         }
 
