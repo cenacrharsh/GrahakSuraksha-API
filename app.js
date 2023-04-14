@@ -9,7 +9,7 @@ const userReportsRouter = require("./routes/user_reports/user_reports.router");
 const app = express();
 
 //! Middlewares
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 app.use(express.json());
 

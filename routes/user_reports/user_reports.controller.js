@@ -88,6 +88,20 @@ async function userReportsHandler(req, res) {
     }
 }
 
+async function getAllReportsHandler(req, res) {
+    const allReports = await userReportsModel.find();
+    console.log("allreports: ", allReports);
+    if (!allReports) {
+        return res.status(400).json({
+            message: "Error occurred while fetching all reports",
+        });
+    }
+    return res.status(200).json({
+        reports: allReports,
+    });
+}
+
 module.exports = {
     userReportsHandler,
+    getAllReportsHandler,
 };
