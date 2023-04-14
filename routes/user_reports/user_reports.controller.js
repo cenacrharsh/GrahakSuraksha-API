@@ -4,6 +4,9 @@ fraudTypeEnums = userReportsModelInstance.fraudTypeEnums;
 
 async function userReportsHandler(req, res) {
     try {
+        console.log("<---- Req Body ----->");
+        console.log(req.body);
+
         const {
             user,
             fraud_type,
