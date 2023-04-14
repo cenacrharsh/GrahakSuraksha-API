@@ -38,8 +38,11 @@ authRouter.post("/signin", function (req, res) {
                 // req.session.user = user;
 
                 res.status(200).json({
-                    message: "Successfully Logged In !!!",
-                    user: user,
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    password: user.password,
+                    confirmPassword: "",
                 });
             }
         })
@@ -115,7 +118,11 @@ authRouter.post("/signup", function (req, res) {
                     .then(function (user) {
                         console.log("new user", user);
                         return res.status(200).json({
-                            user: user,
+                            _id: user._id,
+                            name: user.name,
+                            email: user.email,
+                            password: user.password,
+                            confirmPassword: "",
                         });
                     })
                     .catch(function (err) {
