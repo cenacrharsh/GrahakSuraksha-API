@@ -33,11 +33,11 @@ async function userReportsHandler(req, res) {
             });
         }
 
-        if (!supporting_document) {
-            return res.status(400).json({
-                message: "Please enter supporting_document",
-            });
-        }
+        // if (!supporting_document) {
+        //     return res.status(400).json({
+        //         message: "Please enter supporting_document",
+        //     });
+        // }
 
         if (!description) {
             return res.status(400).json({
@@ -54,7 +54,10 @@ async function userReportsHandler(req, res) {
             fraud = fraudTypeEnums.payment;
         }
 
-        const imageBuffer = Buffer.from(supporting_document, "base64");
+        let imageBuffer;
+        if (supporting_document) {
+            imageBuffer = Buffer.from(supporting_document, "base64");
+        }
 
         const report = await userReportsModel.create({
             user_id: user._id,
@@ -76,9 +79,7 @@ async function userReportsHandler(req, res) {
         }
 
         console.log("new report: ", report);
-        return res.status(200).json({
-            report: report,
-        });
+        return res.status(200);
     } catch (err) {
         console.log("Error: ", err);
         return res.status(500).json({
