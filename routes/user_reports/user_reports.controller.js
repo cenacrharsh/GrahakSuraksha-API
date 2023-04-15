@@ -107,14 +107,15 @@ async function getAllReportsHandler(req, res) {
 }
 
 async function acceptReportHandler(req, res) {
-    const report_id = req.params.id;
+    const report_id = req.body.report_id;
+    console.log("report id: ", report_id);
     const report = await userReportsModel.findOne({ _id: report_id });
     if (!report) {
         return res.status(400).json({
             message: "No such report found",
         });
     }
-    console.log("report: ", report);
+    // console.log("report: ", report);
 
     if (report.isVerified === true) {
         return res.status(200).json({

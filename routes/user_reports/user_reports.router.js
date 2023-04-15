@@ -10,6 +10,6 @@ const {
 
 userReportsRouter.post("/", userReportsHandler);
 userReportsRouter.get("/", getAllReportsHandler);
-userReportsRouter.get("/accept_report/:id", acceptReportHandler);
+userReportsRouter.post("/accept_report", acceptReportHandler);
 
 module.exports = userReportsRouter;
