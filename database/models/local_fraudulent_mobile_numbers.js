@@ -11,7 +11,7 @@ const localFraudulentMobileNumbersSchema = new mongoose.Schema(
         //     required: true,
         // },
         number_of_userReported: {
-            type: String,
+            type: Number,
             required: true,
         },
     },

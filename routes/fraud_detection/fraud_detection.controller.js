@@ -1,6 +1,6 @@
 const govfraudulentMobileNumbersModel = require("../../database/models/gov_fraudulent_mobile_numbers");
-const localfraudulentPhoneNumbersModel = require("../../database/models/local_fraudulent_mobile_numbers");
 const govfraudulentUpiIdsModel = require("../../database/models/gov_fraudulent_upi_ids");
+const localfraudulentMobileNumbersModel = require("../../database/models/local_fraudulent_mobile_numbers");
 const localfraudulentUpiIdsModel = require("../../database/models/local_fraudulent_upi_ids");
 
 async function fraudDetectionHandler(req, res) {
@@ -97,6 +97,33 @@ async function fraudDetectionHandler(req, res) {
     }
 }
 
+async function getAllReportedEntityHandler(req, res) {
+    let reportedMobileNumbers = await localfraudulentMobileNumbersModel.find(
+        {}
+    );
+    if (!reportedMobileNumbers) {
+        return res.status(500).json({
+            message: "Error in fetching mobile numbers",
+        });
+    }
+    console.log("reportedMobileNumbers: ", reportedMobileNumbers);
+
+    let reportedUpiIds = await localfraudulentUpiIdsModel.find({});
+    if (!reportedUpiIds) {
+        return res.status(500).json({
+            message: "Error in fetching upi ids",
+        });
+    }
+    console.log("reportedUpiIds: ", reportedUpiIds);
+
+    let allReportedEntity = [...reportedMobileNumbers, ...reportedUpiIds];
+    return res.status(200).json({
+        message: "All reported entities",
+        data: allReportedEntity,
+    });
+}
+
 module.exports = {
     fraudDetectionHandler,
+    getAllReportedEntityHandler,
 };

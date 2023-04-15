@@ -115,7 +115,7 @@ async function acceptReportHandler(req, res) {
             message: "No such report found",
         });
     }
-    // console.log("report: ", report);
+    console.log("report: ", report);
 
     if (report.isVerified === true) {
         return res.status(200).json({
@@ -129,28 +129,66 @@ async function acceptReportHandler(req, res) {
         { new: true }
     );
     console.log("acceptReport: ", acceptReport);
-    // let entity = report.reported_entity;
-    // console.log("entity: ", typeof entity);
-    // let verifyReport;
-    // if (entity.includes("@")) {
-    //     console.log("upi id found");
-    //     verifyReport = await localfraudulentUpiIdsModel.findOneAndUpdate(
-    //         {
-    //             reported_entity: entity,
-    //         },
-    //         { isVerified: true }
-    //     );
-    //     console.log("verifyReport upi: ", verifyReport);
-    // } else {
-    //     console.log("mobile phone found");
-    //     verifyReport = await localfraudulentPhoneNumbersModel.findOneAndUpdate(
-    //         {
-    //             reported_entity: entity,
-    //         },
-    //         { isVerified: true }
-    //     );
-    //     console.log("verifyReport phone number: ", verifyReport);
-    // }
+
+    // update number_of_userReported in local DB
+    let entity = String(report.reported_entity);
+    console.log("entity: ", typeof entity);
+    console.log("entity: ", entity);
+    let increaseReported;
+    if (entity.includes("@")) {
+        console.log("upi id found");
+        let findReported = await localfraudulentUpiIdsModel.findOne({
+            upi_id: entity,
+        });
+        console.log("found upi: ", findReported);
+        if (!findReported) {
+            // add the upi id to the DB
+            let addReport = await localfraudulentUpiIdsModel.create({
+                upi_id: entity,
+                number_of_userReported: 1,
+            });
+        } else {
+            // inc count in DB
+            increaseReported =
+                await localfraudulentUpiIdsModel.findOneAndUpdate(
+                    {
+                        upi_id: entity,
+                    },
+                    { $inc: { number_of_userReported: 1 } },
+                    { new: true }
+                );
+        }
+        console.log("increaseReported upi: ", increaseReported);
+    } else {
+        console.log("mobile phone found");
+        let findReported = await localfraudulentPhoneNumbersModel.findOne({
+            mobile_number: entity,
+        });
+        if (!findReported) {
+            // add the number to the DB
+            let addReport = await localfraudulentPhoneNumbersModel.create({
+                mobile_number: entity,
+                number_of_userReported: 1,
+            });
+        } else {
+            // inc count in DB
+            increaseReported =
+                await localfraudulentPhoneNumbersModel.findOneAndUpdate(
+                    {
+                        mobile_number: entity,
+                    },
+                    { $inc: { number_of_userReported: 1 } },
+                    { new: true }
+                );
+        }
+        console.log("verifyReport phone number: ", verifyReport);
+    }
+
+    if (!increaseReported) {
+        return res.status(400).json({
+            message: "Error in Updating Reports",
+        });
+    }
 
     return res.status(200).json({
         message: "Report Accepted",
