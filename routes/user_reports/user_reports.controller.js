@@ -1,3 +1,6 @@
+const localfraudulentPhoneNumbersModel = require("../../database/models/local_fraudulent_mobile_numbers");
+const govfraudulentUpiIdsModel = require("../../database/models/gov_fraudulent_upi_ids");
+const localfraudulentUpiIdsModel = require("../../database/models/local_fraudulent_upi_ids");
 const userReportsModelInstance = require("../../database/models/user_reports.model");
 userReportsModel = userReportsModelInstance.model;
 fraudTypeEnums = userReportsModelInstance.fraudTypeEnums;
@@ -103,7 +106,58 @@ async function getAllReportsHandler(req, res) {
     });
 }
 
+async function acceptReportHandler(req, res) {
+    const report_id = req.params.id;
+    const report = await userReportsModel.findOne({ _id: report_id });
+    if (!report) {
+        return res.status(400).json({
+            message: "No such report found",
+        });
+    }
+    console.log("report: ", report);
+
+    if (report.isVerified === true) {
+        return res.status(200).json({
+            message: "Report Already Accepted",
+        });
+    }
+
+    const acceptReport = await userReportsModel.findOneAndUpdate(
+        { _id: report_id },
+        { isVerified: true },
+        { new: true }
+    );
+    console.log("acceptReport: ", acceptReport);
+    // let entity = report.reported_entity;
+    // console.log("entity: ", typeof entity);
+    // let verifyReport;
+    // if (entity.includes("@")) {
+    //     console.log("upi id found");
+    //     verifyReport = await localfraudulentUpiIdsModel.findOneAndUpdate(
+    //         {
+    //             reported_entity: entity,
+    //         },
+    //         { isVerified: true }
+    //     );
+    //     console.log("verifyReport upi: ", verifyReport);
+    // } else {
+    //     console.log("mobile phone found");
+    //     verifyReport = await localfraudulentPhoneNumbersModel.findOneAndUpdate(
+    //         {
+    //             reported_entity: entity,
+    //         },
+    //         { isVerified: true }
+    //     );
+    //     console.log("verifyReport phone number: ", verifyReport);
+    // }
+
+    return res.status(200).json({
+        message: "Report Accepted",
+    });
+}
+
 module.exports = {
     userReportsHandler,
     getAllReportsHandler,
+    acceptReportHandler,
 };

@@ -147,7 +147,7 @@ authRouter.post("/signup", function (req, res) {
 
 //! Sign Out
 authRouter.get("/signout", function (req, res) {
-    req.session.destroy();
+    // req.session.destroy();
     console.log("Successfully Logged Out !!!");
     res.status(200).json({
         message: "Successfully Logged Out !!!",

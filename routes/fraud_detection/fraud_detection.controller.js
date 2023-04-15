@@ -56,6 +56,11 @@ async function fraudDetectionHandler(req, res) {
                 upi_id: upi_id,
             });
 
+            const newData = await govfraudulentUpiIdsModel.find();
+            console.log("newData: ", newData);
+
+            console.log("fraudulentUpiId: ", fraudulentUpiId);
+
             if (fraudulentUpiId !== null) {
                 return res.status(200).json({
                     is_gov_verified: true,
