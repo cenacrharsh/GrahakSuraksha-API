@@ -1,6 +1,7 @@
 const express = require("express");
 
 const morgan = require("morgan");
+const cors = require("cors");
 
 const fraudDetectionRouter = require("./routes/fraud_detection/fraud_detection.router");
 const authRouter = require("./routes/authentication/authentication.router");
@@ -10,6 +11,8 @@ const app = express();
 
 //! Middlewares
 app.use(morgan("dev"));
+
+app.use(cors());
 
 app.use(express.json());
 
