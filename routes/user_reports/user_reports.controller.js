@@ -1,9 +1,10 @@
-const localfraudulentPhoneNumbersModel = require("../../database/models/local_fraudulent_mobile_numbers");
-const govfraudulentUpiIdsModel = require("../../database/models/gov_fraudulent_upi_ids");
+const localfraudulentMobileNumbersModel = require("../../database/models/local_fraudulent_mobile_numbers");
 const localfraudulentUpiIdsModel = require("../../database/models/local_fraudulent_upi_ids");
 const userReportsModelInstance = require("../../database/models/user_reports.model");
 userReportsModel = userReportsModelInstance.model;
 fraudTypeEnums = userReportsModelInstance.fraudTypeEnums;
+const govfraudulentUpiIdsModel = require("../../database/models/gov_fraudulent_upi_ids");
+const govfraudulentMobileNumbersModel = require("../../database/models/gov_fraudulent_mobile_numbers");
 
 async function userReportsHandler(req, res) {
     try {
@@ -132,8 +133,8 @@ async function acceptReportHandler(req, res) {
 
     // update number_of_userReported in local DB
     let entity = String(report.reported_entity);
-    console.log("entity: ", typeof entity);
-    console.log("entity: ", entity);
+    // console.log("entity: ", typeof entity);
+    // console.log("entity: ", entity);
     let increaseReported;
     if (entity.includes("@")) {
         console.log("upi id found");
@@ -161,19 +162,19 @@ async function acceptReportHandler(req, res) {
         console.log("increaseReported upi: ", increaseReported);
     } else {
         console.log("mobile phone found");
-        let findReported = await localfraudulentPhoneNumbersModel.findOne({
+        let findReported = await localfraudulentMobileNumbersModel.findOne({
             mobile_number: entity,
         });
         if (!findReported) {
             // add the number to the DB
-            let addReport = await localfraudulentPhoneNumbersModel.create({
+            let addReport = await localfraudulentMobileNumbersModel.create({
                 mobile_number: entity,
                 number_of_userReported: 1,
             });
         } else {
             // inc count in DB
             increaseReported =
-                await localfraudulentPhoneNumbersModel.findOneAndUpdate(
+                await localfraudulentMobileNumbersModel.findOneAndUpdate(
                     {
                         mobile_number: entity,
                     },
@@ -195,8 +196,47 @@ async function acceptReportHandler(req, res) {
     });
 }
 
+async function verifyReportedEntityHandler(req, res) {
+    const report_id = req.body.report_id;
+    console.log("report id: ", report_id);
+
+    const report = await userReportsModel.findOne({ _id: report_id });
+    if (!report) {
+        return res.status(400).json({
+            message: "No such report found",
+        });
+    }
+    console.log("report: ", report);
+
+    let entity = String(report.reported_entity);
+    if (entity.includes("@")) {
+        const newUpiId = await govfraudulentUpiIdsModel.create({
+            upi_id: entity,
+        });
+        if (!newUpiId) {
+            return res.status(500).json({
+                message: "Error occurred while adding Upi Id to government DB",
+            });
+        }
+    } else {
+        const newMobileNumber = await govfraudulentMobileNumbersModel.create({
+            mobile_number: entity,
+        });
+        if (!newMobileNumber) {
+            return res.status(500).json({
+                message:
+                    "Error occurred while adding Mobile Number to government DB",
+            });
+        }
+    }
+    return res.status(200).json({
+        message: "Reported entity added to government DB",
+    });
+}
+
 module.exports = {
     userReportsHandler,
     getAllReportsHandler,
     acceptReportHandler,
+    verifyReportedEntityHandler,
 };
