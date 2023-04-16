@@ -210,23 +210,46 @@ async function verifyReportedEntityHandler(req, res) {
 
     let entity = String(report.reported_entity);
     if (entity.includes("@")) {
-        const newUpiId = await govfraudulentUpiIdsModel.create({
+        const checkUpiId = await govfraudulentUpiIdsModel.findOne({
             upi_id: entity,
         });
-        if (!newUpiId) {
-            return res.status(500).json({
-                message: "Error occurred while adding Upi Id to government DB",
+        if (checkUpiId !== null) {
+            return res.status(200).json({
+                message: "Upi Id already exists in government DB",
             });
+        } else {
+            const newUpiId = await govfraudulentUpiIdsModel.create({
+                upi_id: entity,
+            });
+            if (!newUpiId) {
+                return res.status(500).json({
+                    message:
+                        "Error occurred while adding Upi Id to government DB",
+                });
+            }
         }
     } else {
-        const newMobileNumber = await govfraudulentMobileNumbersModel.create({
-            mobile_number: entity,
-        });
-        if (!newMobileNumber) {
-            return res.status(500).json({
-                message:
-                    "Error occurred while adding Mobile Number to government DB",
+        const checkMobileNumber = await govfraudulentMobileNumbersModel.findOne(
+            {
+                mobile_number: entity,
+            }
+        );
+        console.log("checkMobileNumber: ", checkMobileNumber);
+        if (checkMobileNumber !== null) {
+            return res.status(200).json({
+                message: "Mobile Number already exists in government DB",
             });
+        } else {
+            const newMobileNumber =
+                await govfraudulentMobileNumbersModel.create({
+                    mobile_number: entity,
+                });
+            if (!newMobileNumber) {
+                return res.status(500).json({
+                    message:
+                        "Error occurred while adding Mobile Number to government DB",
+                });
+            }
         }
     }
     return res.status(200).json({
